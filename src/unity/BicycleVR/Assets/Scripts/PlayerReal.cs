@@ -9,6 +9,7 @@ public class PlayerReal: MonoBehaviour {
 
 	private SerialPort	sp;
 
+	public bool enableSerialInput = false;
 	public float upSpeed = 20.0f;
 
 	private float forwardSpeed = 0.0f;
@@ -33,6 +34,11 @@ public class PlayerReal: MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		if (!enableSerialInput)
+		{
+			enabled = false;
+			return;
+		}
 
 		GameObject gameControllerObject = GameObject.FindWithTag("GameController");
 		if (gameControllerObject != null)
@@ -55,11 +61,21 @@ public class PlayerReal: MonoBehaviour {
 			sp = new SerialPort ("/deb/tty.usbmodem411", 9600);
 			break;
 		default:
-			throw new System.Exception();
+			Debug.LogWarning("Serial bike input is unsupported on this platform; disabling PlayerReal.");
+			enabled = false;
+			return;
 		}
 
-		sp.Open ();
-		sp.ReadTimeout = 5000;
+		try
+		{
+			sp.Open ();
+			sp.ReadTimeout = 5000;
+		}
+		catch (System.Exception ex)
+		{
+			Debug.LogWarning("Serial bike input failed to open: " + ex.Message);
+			enabled = false;
+		}
 	}
 
 	void OnCollisionStay (Collision col)
@@ -89,7 +105,7 @@ public class PlayerReal: MonoBehaviour {
 		SensorData data2 = new SensorData();
 		SensorData data3 = new SensorData();
 
-		if (sp.IsOpen)
+		if (sp != null && sp.IsOpen)
 		{
 			try
 			{
@@ -184,6 +200,12 @@ public class PlayerReal: MonoBehaviour {
 		}
 
 		bikeRigidbody.velocity = Vector3.ClampMagnitude(bikeRigidbody.velocity, upSpeed);
+	}
+
+	void OnDestroy()
+	{
+		if (sp != null && sp.IsOpen)
+			sp.Close();
 	}
 
 	SensorData ParsePacket (string str) {

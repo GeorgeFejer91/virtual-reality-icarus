@@ -10,8 +10,8 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
-  productName: New Unity Project 1
+  companyName: Viscereality
+  productName: Icarus Excitometer
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13333334, g: 0.17254902, b: 0.21176471, a: 1}
@@ -136,15 +136,15 @@ PlayerSettings:
   protectGraphicsMemory: 0
   useHDRDisplay: 0
   applicationIdentifier:
-    Android: com.Company.ProductName
-    Standalone: unity.DefaultCompany.New Unity Project 1
+    Android: com.viscereality.icarusexcitometer
+    Standalone: unity.Viscereality.IcarusExcitometer
     Tizen: com.Company.ProductName
     iOS: com.Company.ProductName
     tvOS: com.Company.ProductName
   buildNumber:
     iOS: 0
   AndroidBundleVersionCode: 1
-  AndroidMinSdkVersion: 16
+  AndroidMinSdkVersion: 23
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
   aotOptions: 
@@ -241,7 +241,7 @@ PlayerSettings:
     m_Automatic: 0
   m_BuildTargetVRSettings:
   - m_BuildTarget: Android
-    m_Enabled: 0
+    m_Enabled: 1
     m_Devices:
     - Oculus
   - m_BuildTarget: Metro

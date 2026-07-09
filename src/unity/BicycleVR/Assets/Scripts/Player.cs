@@ -7,11 +7,17 @@ public class Player : MonoBehaviour {
     private float forwardSpeed = 0.0f;
     public float rotationSpeed = 2.0f; 
 	public float flyingPower = 200.0f;
+	public float polarMinForwardSpeed = 8.0f;
+	public float polarMaxForwardSpeed = 35.0f;
+	public float polarMinLiftPower = 30.0f;
+	public float polarMaxLiftPower = 550.0f;
+	public float polarSpeedResponse = 2.5f;
 	private float jump = 300.0f;
 	private bool contact = true;
 
     private Rigidbody bikeRigidbody;
 	private GameController gameController;
+	private PolarExcitementRuntime polarRuntime;
 
     void Start ()
 	{
@@ -26,6 +32,7 @@ public class Player : MonoBehaviour {
 		}
 
 		bikeRigidbody = GetComponent<Rigidbody>();
+		polarRuntime = PolarExcitementRuntime.EnsureRuntime();
     }
 
 	void OnCollisionStay (Collision col)
@@ -46,6 +53,8 @@ public class Player : MonoBehaviour {
 
     void Update ()
 	{
+		ApplyPolarExcitement();
+
 		//Forward
 		transform.position += transform.forward * Time.deltaTime * forwardSpeed;
 
@@ -67,4 +76,23 @@ public class Player : MonoBehaviour {
 			gameController.TakeCoin (-1.0f);
 		}
     }
+
+	private void ApplyPolarExcitement()
+	{
+		if (polarRuntime == null)
+			polarRuntime = PolarExcitementRuntime.EnsureRuntime();
+
+		if (polarRuntime == null || !polarRuntime.HasHeartRate)
+			return;
+
+		float excitement = Mathf.Clamp01(polarRuntime.Excitement01);
+		float desiredForward = Mathf.Lerp(polarMinForwardSpeed, polarMaxForwardSpeed, excitement);
+		forwardSpeed = Mathf.Lerp(forwardSpeed, Mathf.Max(forwardSpeed, desiredForward), Time.deltaTime * polarSpeedResponse);
+
+		if (contact == false && bikeRigidbody != null)
+		{
+			float lift = Mathf.Lerp(polarMinLiftPower, polarMaxLiftPower, excitement);
+			bikeRigidbody.AddForce(transform.up * lift);
+		}
+	}
 }

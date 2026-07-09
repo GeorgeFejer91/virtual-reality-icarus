@@ -59,9 +59,10 @@ public class GameController : MonoBehaviour
 
 	public Transform cameraInfo;
 
-	private AudioSource audioSource;
+    private AudioSource audioSource;
 
     private bool game = true;
+	private string controlsText;
 
     private void Start()
     {
@@ -70,7 +71,8 @@ public class GameController : MonoBehaviour
 		UpdateHealthBar ();
 		UpdateVoiceBar ();
 
-		manualText.text = "<Horzontal> Steering\n<Space> Flying\n<S> Special Function\n";
+		controlsText = "<Horizontal> Steering\n<Space> Backup flying\n<S> Special Function\n";
+		manualText.text = controlsText;
         restartText.text = "";
         gameoverText.text = "+";
 		startTime = Time.time;
@@ -122,8 +124,24 @@ public class GameController : MonoBehaviour
 			string seconds = (t % 60).ToString ("f2");
 
 			timerText.text = minutes + ":" + seconds;
+			UpdatePolarStatusText ();
 		}
     }
+
+	private void UpdatePolarStatusText()
+	{
+		if (manualText == null)
+			return;
+
+		PolarExcitementRuntime polar = PolarExcitementRuntime.Instance;
+		if (polar == null)
+		{
+			manualText.text = controlsText;
+			return;
+		}
+
+		manualText.text = "Polar: " + polar.BuildStatusLine() + "\n" + controlsText;
+	}
 
 	private void UpdateHealthBar()
 	{
